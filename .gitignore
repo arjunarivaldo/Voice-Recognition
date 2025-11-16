@@ -26,6 +26,3 @@ processed_data_intent/
 # Mirip dengan bert-summarizer-results... di Project 2
 models/
 logs/
-
-# File output evaluasi (plot)
-*.png
