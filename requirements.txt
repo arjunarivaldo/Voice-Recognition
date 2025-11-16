@@ -1,0 +1,33 @@
+# Core ML & Data Handling
+torch
+numpy
+pandas
+scikit-learn
+
+# Hugging Face Ecosystem
+transformers
+datasets
+evaluate
+accelerate  # Direkomendasikan untuk Trainer
+safetensors # Sering diperlukan untuk memuat model
+
+# Metrik (dipanggil oleh evaluate)
+bert_score
+sentencepiece # Diperlukan oleh beberapa tokenizer/metrik
+
+# Audio Processing
+librosa     # Untuk ekstraksi MFCC
+
+# NLP Utilities
+nltk        # Untuk tokenisasi kalimat di EDA
+wordcloud   # Untuk visualisasi EDA
+
+# Plotting & Utils
+seaborn
+matplotlib
+psutil      # Untuk monitoring memori
+tqdm        # Untuk progress bar
+
+# Notebook
+jupyter
+ipywidgets

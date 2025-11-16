@@ -1,0 +1,31 @@
+# Python cache & virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*env/
+venv/
+.venv/
+
+# IDE & OS specific
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Data yang Diproses (Folder output dari skrip preprocessing)
+# Mirip dengan processed_liputan6... di Project 2
+processed_data_mfcc/
+processed_data_wav2vec2/
+processed_data_whisper/
+processed_data_intent/
+
+# Model & Log yang Dilatih (Folder output dari skrip training)
+# Mirip dengan bert-summarizer-results... di Project 2
+models/
+logs/
+
+# File output evaluasi (plot)
+*.png
