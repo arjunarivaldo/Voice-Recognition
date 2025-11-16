@@ -73,20 +73,9 @@ Evaluasi dilakukan pada 57 sampel (10%) dari dataset `en-US`.
 
 Semua kode bersifat *reusable* dan dibagi menjadi beberapa skrip di dalam folder `src/`.
 
-src/ ├── config_asr.py # File konfigurasi utama (paths, model names, params) 
-     ├── utils_asr.py # Fungsi helper (cth: clean_text) │ 
-     ├── 01_preprocess_mfcc.py # Preprocessing untuk Benchmark 1 (LSTM) 
-     ├── 02_train_lstm.py # Skrip training untuk Benchmark 1 (LSTM) │ 
-     ├── 03_preprocess_wav2vec2.py # Preprocessing untuk Benchmark 2 (Wav2Vec2) 
-     ├── 04_train_wav2vec2.py # Skrip training untuk Benchmark 2 (Wav2Vec2) │ 
-     ├── 05_preprocess_whisper.py # Preprocessing untuk Benchmark 3 (Whisper) 
-     ├── 06_train_whisper.py # Skrip training untuk Benchmark 3 (Whisper) │ 
-     ├── 07_evaluate_all.py # Skrip evaluasi akhir (ASR Benchmarks) │ 
-     ├── 08_preprocess_intent.py # Preprocessing untuk Klasifikasi Intensi (BERT)
-     ├── 09_train_intent.py # Skrip training untuk Klasifikasi Intensi (BERT)
-     ├── 10_evaluate_intent.py # Skrip evaluasi akhit (Real-World SLU Pipeline)
-     └── model_asr.py # Arsitektur model LSTM (from scratch)
-
+'''
+src/ ├── config_asr.py # File konfigurasi utama (paths, model names, params) ├── utils_asr.py # Fungsi helper (cth: clean_text) │ ├── 01_preprocess_mfcc.py # Preprocessing untuk Benchmark 1 (LSTM) ├── 02_train_lstm.py # Skrip training untuk Benchmark 1 (LSTM) │ ├── 03_preprocess_wav2vec2.py # Preprocessing untuk Benchmark 2 (Wav2Vec2) ├── 04_train_wav2vec2.py # Skrip training untuk Benchmark 2 (Wav2Vec2) │ ├── 05_preprocess_whisper.py # Preprocessing untuk Benchmark 3 (Whisper) ├── 06_train_whisper.py # Skrip training untuk Benchmark 3 (Whisper) │ ├── 07_evaluate_all.py # Skrip evaluasi akhir (ASR Benchmarks) │ ├── 08_preprocess_intent.py # Preprocessing untuk Klasifikasi Intensi (BERT) ├── 09_train_intent.py # Skrip training untuk Klasifikasi Intensi (BERT) │ ├── 10_evaluate_intent_pipeline.py # Skrip evaluasi akhir (Real-World SLU Pipeline) │ └── model_asr.py # Arsitektur model LSTM (from scratch)
+'''
 ---
 
 ## 🚀 Cara Menjalankan Proyek
