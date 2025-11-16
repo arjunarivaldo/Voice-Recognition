@@ -193,7 +193,9 @@ src/
     
     10_evaluate_intent_pipeline.py # Skrip evaluasi akhir (Real-World SLU Pipeline)
     
-    model_asr.py                # Arsitektur model LSTM (from scratch)```
+    model_asr.py                # Arsitektur model LSTM (from scratch)
+```
+
 ---
 
 ## 🚀 Cara Menjalankan Proyek
