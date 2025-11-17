@@ -44,7 +44,7 @@ Evaluasi dilakukan pada 57 sampel (10%) dari dataset `en-US` menggunakan 4 metri
 
 ### Analisis ASR
 1.  **LSTM & Wav2Vec2 (Gagal):** Melatih dari nol (LSTM) atau *fine-tuning* model *self-supervised* (Wav2Vec2) pada data ~500 sampel gagal total menghasilkan teks yang benar (WER 100%).
-2.  **Whisper (Sukses):** **Whisper** adalah pemenang mutlak di semua metrik. Karena dilatih pada 680.000 jam data **berlabel**, model ini sudah "mengerti" bahasa Inggris dan berhasil di-*fine-tune* pada data kecil kita (WER 27.1%).
+2.  **Whisper (Sukses):** **Whisper** adalah pemenang mutlak di semua metrik. Karena dilatih pada 680.000 jam data **berlabel**, model ini sudah "mengerti" bahasa Inggris dan berhasil di-*fine-tune* pada data kecil kita (WER 26.6%).
 
 ---
 
@@ -105,8 +105,8 @@ src/
 
 1.  **Clone dan Setup Environment:**
     ```bash
-    git clone [https://github.com/arjunarivaldo/Voice-Recognition.git]
-    cd [Voice-Recognition]
+    git clone https://github.com/arjunarivaldo/Voice-Recognition.git
+    cd Voice-Recognition
     pip install -r requirements.txt
     ```
 
