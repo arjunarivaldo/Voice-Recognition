@@ -141,11 +141,6 @@ src/
 
 ---
 
-## 📦 Dependensi Utama
-* `torch`
-* `transformers`
-* `datasets`
-* `evaluate` (untuk metrik WER, CER, BERTScore)
-* `librosa` (untuk MFCC)
-* `pandas` & `seaborn` (untuk plotting)
-* `psutil`
+## 👤 Author
+Project by **Arjuna Rivaldo**  
+Under mentorship of **Indonesia AI**
