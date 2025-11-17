@@ -19,9 +19,9 @@ Proyek ini dibagi menjadi dua pipeline utama:
 ## 📊 Hasil Pipeline 1: Automatic Speech Recognition (ASR)
 
 Kami membandingkan tiga pendekatan benchmark untuk ASR:
-* **Benchmark 1 (LSTM from 0):** Model LSTM *bidirectional* yang dilatih dari nol menggunakan fitur **MFCC**.
-* **Benchmark 2 (Wav2Vec2 Fine-Tune):** *Fine-tuning* pada model `facebook/wav2vec2-base-960h` (Self-Supervised).
-* **Benchmark 3 (Whisper Fine-Tune):** *Fine-tuning* pada model `openai/whisper-tiny.en` (Supervised).
+* **LSTM from 0:** Model LSTM *bidirectional* yang dilatih dari nol menggunakan fitur **MFCC**.
+* **Wav2Vec2 Fine-Tune:** *Fine-tuning* pada model `facebook/wav2vec2-base-960h` (Self-Supervised).
+* **Whisper Fine-Tune:** *Fine-tuning* pada model `openai/whisper-tiny.en` (Supervised).
 
 ### Evaluasi ASR
 Evaluasi dilakukan pada 57 sampel (10%) dari dataset `en-US` menggunakan 4 metrik.
