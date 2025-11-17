@@ -28,9 +28,6 @@ def preprocess_batch_wav2vec2(batch, processor):
         text=[cleaned_text]
     )
     
-    # --- PERBAIKAN ---
-    # "processed_batch" adalah batch-of-1. Kita ambil elemen ke-0
-    # untuk mendapatkan data 1D (List[float] dan List[int])
     batch["input_values"] = processed_batch["input_values"][0] 
     batch["labels"] = processed_batch["labels"][0]
     
@@ -48,15 +45,15 @@ def main():
 
     # 1. Load Processor (Tokenizer + Feature Extractor)
     print(f"Memuat Processor dari '{config.WAV2VEC2_MODEL_NAME}'...")
-    # Penting: Kita harus pastikan token <blank> (untuk CTC) adalah token 'pad'
+    # Penting: pastikan token <blank> (untuk CTC) adalah token 'pad'
     processor = Wav2Vec2Processor.from_pretrained(config.WAV2VEC2_MODEL_NAME)
     processor.tokenizer.pad_token = processor.tokenizer.eos_token
 
-    # 2. Load Dataset (SAMA SEPERTI SEBELUMNYA)
+    # 2. Load Dataset
     print(f"Memuat dataset '{config.DATASET_NAME}' subset '{config.LANG_SUBSET}'...")
     raw_dataset = load_dataset(config.DATASET_NAME, config.LANG_SUBSET, split="train")
 
-    # 3. Resampling Audio (SAMA SEPERTI SEBELUMNYA)
+    # 3. Resampling Audio
     print(f"Melakukan resampling audio ke {config.TARGET_SAMPLING_RATE} Hz...")
     raw_dataset = raw_dataset.cast_column(
         "audio", Audio(sampling_rate=config.TARGET_SAMPLING_RATE)

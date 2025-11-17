@@ -6,7 +6,7 @@ from transformers import PreTrainedModel, PretrainedConfig
 from transformers.modeling_outputs import CausalLMOutput
 # CausalLMOutput adalah output standar yang berisi "loss" dan "logits"
 
-# --- 1. Config (Mirip BertConfig) ---
+# --- 1. Config ---
 class LstmCtcConfig(PretrainedConfig):
     """
     Konfigurasi untuk model LSTM-CTC from-scratch.
@@ -31,7 +31,7 @@ class LstmCtcConfig(PretrainedConfig):
         self.vocab_size = vocab_size
         self.ctc_blank_token_id = ctc_blank_token_id
 
-# --- 2. Model (Mirip BertSumClassifier) ---
+# --- 2. Model ---
 class LstmCtcForAsr(PreTrainedModel):
     """
     Model LSTM-CTC from-scratch.
@@ -49,7 +49,7 @@ class LstmCtcForAsr(PreTrainedModel):
             num_layers=config.num_layers,
             dropout=config.dropout,
             bidirectional=True,                 # Penting untuk konteks
-            batch_first=True                    # Input kita (B, T, F)
+            batch_first=True                    # Input (B, T, F)
         )
         
         # Layer Linear (Classifier)
@@ -75,7 +75,7 @@ class LstmCtcForAsr(PreTrainedModel):
         labels: Optional[torch.Tensor] = None,
         input_lengths: Optional[torch.Tensor] = None, # (Akan disuplai Collator)
         label_lengths: Optional[torch.Tensor] = None, # (Akan disuplai Collator)
-        attention_mask: Optional[torch.Tensor] = None, # (Trainer membuatnya, kita bisa pakai)
+        attention_mask: Optional[torch.Tensor] = None, # (Trainer membuatnya, bisa dipakai)
         **kwargs
     ):
         # 1. Lewatkan ke LSTM
@@ -123,7 +123,6 @@ class LstmCtcForAsr(PreTrainedModel):
             )
 
         # Kembalikan output yang kompatibel dengan Trainer
-        # Mirip dengan SequenceClassifierOutput di Project 2 Anda
         return CausalLMOutput(
             loss=loss,
             logits=logits, # (Kita kembalikan logits mentah, bukan log_probs)

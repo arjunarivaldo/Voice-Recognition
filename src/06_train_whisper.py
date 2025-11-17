@@ -12,7 +12,7 @@ from transformers import (
     Trainer,
     TrainingArguments,
     WhisperProcessor,
-    WhisperForConditionalGeneration # (BARU) Model Seq2Seq
+    WhisperForConditionalGeneration
 )
 
 # Impor konfigurasi
@@ -22,7 +22,7 @@ except ImportError:
     print("Error: Pastikan 'config_asr.py' ada di folder 'src/'.")
     exit()
 
-# --- 1. Data Collator (BARU untuk Seq2Seq Audio) ---
+# --- 1. Data Collator (untuk Seq2Seq Audio) ---
 # Mirip dengan DataCollatorForSeq2Seq, tapi untuk audio "input_features"
 
 @dataclass
@@ -93,7 +93,7 @@ def main():
     processor = WhisperProcessor.from_pretrained(config.WHISPER_MODEL_NAME)
     model = WhisperForConditionalGeneration.from_pretrained(config.WHISPER_MODEL_NAME)
 
-    # (Opsional) Whisper tidak perlu 'freeze', tapi kita perlu 
+    # (Opsional) Whisper tidak perlu 'freeze', tapi perlu 
     # mengatur beberapa token ID di config model agar tahu cara .generate()
     model.config.suppress_tokens = []
 
@@ -104,7 +104,7 @@ def main():
     print("Mempersiapkan Training Arguments...")
     training_args = TrainingArguments(
         output_dir=config.OUTPUT_DIR_WHISPER_MODEL,
-        num_train_epochs=10, # Coba 10 epoch
+        num_train_epochs=4, 
         per_device_train_batch_size=16, # Model 'tiny' cukup ringan
         per_device_eval_batch_size=16,
         
@@ -116,7 +116,7 @@ def main():
         save_strategy="epoch", 
         
         load_best_model_at_end=True,
-        # (PENTING) Kita monitor 'loss', bukan 'wer', seperti di Project 2
+        # Memonitor 'loss', bukan 'wer'
         metric_for_best_model="eval_loss", 
         greater_is_better=False, # Loss lebih kecil lebih baik
         
@@ -133,7 +133,6 @@ def main():
         eval_dataset=split_dataset["validation"],
         data_collator=data_collator,
         tokenizer=processor.feature_extractor, # (PENTING untuk Seq2Seq)
-        # Kita tidak pakai compute_metrics, akan dievaluasi di skrip terpisah
     )
 
     # 7. Mulai Training

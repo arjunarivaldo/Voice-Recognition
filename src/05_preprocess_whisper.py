@@ -2,14 +2,13 @@
 import os
 import psutil
 from datasets import load_dataset, Audio
-from transformers import WhisperProcessor # (BARU) Menggunakan WhisperProcessor
+from transformers import WhisperProcessor 
 from functools import partial
 
 # Impor helper dan konfigurasi
 try:
-    # Kita TIDAK perlu clean_text()! 
+    # TIDAK perlu clean_text()! 
     # Whisper dilatih pada data internet (termasuk tanda baca, kapital, dll).
-    # from utils_asr import clean_text 
     import config_asr as config
 except ImportError:
     print("Error: Pastikan 'config_asr.py' ada di 'src/'.")
@@ -22,9 +21,9 @@ def preprocess_batch_whisper(batch, processor):
     audio_input = batch["audio"]
     
     # --- PENTING ---
-    # Kita TIDAK membersihkan teks (no clean_text).
+    # TIDAK membersihkan teks (no clean_text).
     # Whisper dilatih untuk memprediksi tanda baca, kapital, dll.
-    # Kita gunakan "transcription" asli.
+    # Menggunakan "transcription" asli.
     transcription_text = batch["transcription"]
 
     # 1. Audio: Ekstraksi fitur (Log-Mel Spectrogram)
@@ -55,7 +54,6 @@ def main():
     # 1. Load Processor (Tokenizer + Feature Extractor)
     print(f"Memuat Processor dari '{config.WHISPER_MODEL_NAME}'...")
     processor = WhisperProcessor.from_pretrained(config.WHISPER_MODEL_NAME)
-    # (Kita tidak perlu mengatur token 'pad' di sini, model config sudah tahu)
 
     # 2. Load Dataset
     print(f"Memuat dataset '{config.DATASET_NAME}' subset '{config.LANG_SUBSET}'...")

@@ -7,12 +7,12 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Union, Any
 
 from datasets import load_from_disk, DatasetDict
-import evaluate # Gunakan evaluate, bukan load_metric
+import evaluate 
 from transformers import (
     Trainer,
     TrainingArguments,
     Wav2Vec2Processor,
-    Wav2Vec2ForCTC, # (BARU) Model pre-trained
+    Wav2Vec2ForCTC
 )
 
 # Impor konfigurasi
@@ -23,7 +23,7 @@ except ImportError:
     exit()
 
 # --- 1. Inisialisasi Processor & Metrik ---
-# Kita perlu processor untuk decoding metrik
+# Perlu processor untuk decoding metrik
 processor = Wav2Vec2Processor.from_pretrained(config.WAV2VEC2_MODEL_NAME)
 processor.tokenizer.pad_token = processor.tokenizer.eos_token # Atur token pad
 wer_metric = evaluate.load("wer")
@@ -48,7 +48,6 @@ class DataCollatorCTCWithPadding:
         input_features = [{"input_values": feature["input_values"]} for feature in features]
 
         # Gunakan Feature Extractor untuk padding audio
-        # Ini adalah bagian yang hilang/salah di versi sebelumnya
         batch = self.processor.feature_extractor.pad(
             input_features,
             padding=self.padding,
@@ -71,7 +70,6 @@ class DataCollatorCTCWithPadding:
         )
 
         # Ganti pad_token_id (cth: 0) dengan -100 agar diabaikan oleh loss
-        # (Mirip Project 2 Anda)
         labels = labels_batch["input_ids"].masked_fill(labels_batch.attention_mask.ne(1), -100)
 
         # --- 3. Gabungkan ---
@@ -91,7 +89,7 @@ def compute_metrics(pred):
     
     # Decode (Angka -> Teks) menggunakan tokenizer Wav2Vec2
     pred_str = processor.batch_decode(pred_ids)
-    # Kita harus skip token spesial di label_str
+    # Skip token spesial di label_str
     label_str = processor.batch_decode(label_ids, group_tokens=False)
     
     # Hitung WER
@@ -122,7 +120,7 @@ def main():
     print(f"Jumlah data validation: {len(split_dataset['validation'])}")
 
     # 3. Inisialisasi Data Collator (Bawaan Transformers)
-    # Ini jauh lebih sederhana, collator ini akan menangani 'input_values' dan 'labels'
+    # Collator ini akan menangani 'input_values' dan 'labels'
     data_collator = DataCollatorCTCWithPadding(
         processor=processor,
         padding=True
@@ -142,12 +140,11 @@ def main():
     model.freeze_feature_extractor()
 
     # 5. Inisialisasi Training Arguments
-    # (Sama seperti LSTM, tapi epoch lebih sedikit)
     print("Mempersiapkan Training Arguments...")
     training_args = TrainingArguments(
         output_dir=config.OUTPUT_DIR_WAV2VEC2_MODEL,
-        num_train_epochs=10, # Coba 10 epoch (fine-tuning lebih cepat konvergen)
-        per_device_train_batch_size=8, # Model ini besar, kurangi batch size
+        num_train_epochs=10, 
+        per_device_train_batch_size=8, 
         per_device_eval_batch_size=8,
         
         logging_dir=f"{config.OUTPUT_DIR_WAV2VEC2_MODEL}/logs",
@@ -159,14 +156,14 @@ def main():
         
         load_best_model_at_end=True,
         metric_for_best_model="wer", # Monitor WER
-        greater_is_better=False,    # WER lebih kecil lebih baik
+        greater_is_better=False,     # WER lebih kecil lebih baik
         
         fp16=torch.cuda.is_available(), 
         report_to="tensorboard",
         disable_tqdm=True, 
     )
 
-    # 6. Inisialisasi Trainer (LENGKAP)
+    # 6. Inisialisasi Trainer
     trainer = Trainer(
         model=model,
         args=training_args,

@@ -1,4 +1,4 @@
-# Project 3: Automatic Speech Recognition (ASR)
+# Project 3: Voice Recognition
 
 Proyek ini adalah implementasi *end-to-end* dari pipeline **Spoken Language Understanding (SLU)**, sebagai bagian dari Portofolio Project 3 Indonesia AI.
 
@@ -26,21 +26,21 @@ Kami membandingkan tiga pendekatan benchmark untuk ASR:
 ### Evaluasi ASR
 Evaluasi dilakukan pada 57 sampel (10%) dari dataset `en-US` menggunakan 4 metrik.
 
-| Benchmark | Model | WER (↓) | CER (↓) | SER (↓) | BERT-F1 (↑) |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| Benchmark 1 | LSTM (from 0) | 1.0000 | 1.0000 | 1.0000 | 0.0000 |
-| Benchmark 2 | Wav2Vec2 | 1.0000 | 0.9725 | 1.0000 | 0.7971 |
-| **Benchmark 3** | **Whisper** | **0.2713** | **0.2226** | **0.6667** | **0.9593** |
+| Model | WER (↓) | CER (↓) | SER (↓) | BERT-F1 (↑) |
+| :--- | :--- | :--- | :--- | :--- |
+| LSTM (from 0) | 1.000 | 1.000 | 1.000 | 0.000 |
+| Wav2Vec2 | 1.000 | 0.972 | 1.000 | 0.7971 |
+| **Whisper** | **0.266** | **0.217** | **0.754** | **0.9576** |
 
 *(↓) = Semakin rendah semakin baik. (↑) = Semakin tinggi semakin baik.*
 
 ### Visualisasi Hasil ASR
 
 **Perbandingan Error Rates (WER, CER, SER)**
-![Perbandingan Error Rates](benchmark_error_rates_comparison.png)
+![Perbandingan Error Rates](error_rates_comparison.png)
 
 **Perbandingan Skor Semantik (BERTScore F1)**
-![Perbandingan BERTScore](benchmark_bertscore_comparison.png)
+![Perbandingan BERTScore](bertscore_comparison.png)
 
 ### Analisis ASR
 1.  **LSTM & Wav2Vec2 (Gagal):** Melatih dari nol (LSTM) atau *fine-tuning* model *self-supervised* (Wav2Vec2) pada data ~500 sampel gagal total menghasilkan teks yang benar (WER 100%).
@@ -60,111 +60,13 @@ Evaluasi dilakukan pada 57 sampel (10%) dari dataset `en-US`.
 
 | Skenario | Pipeline | Akurasi (↑) |
 | :--- | :--- | :--- |
-| 1 (Ideal) | Teks Asli -> BERT | **0.9474 (94.7%)** |
-| 2 (Real-World) | Audio -> Whisper -> BERT | **0.8947 (89.5%)** |
+| 1 (Ideal) | Teks Asli -> BERT | **0.9649 (96.5%)** |
+| 2 (Real-World) | Audio -> Whisper -> BERT | **0.9474 (94.7%)** |
 
 ### Analisis Intensi
-* Model *classifier* BERT sangat akurat (94.7%) jika diberi input teks yang sempurna.
-* Pada *pipeline real-world*, terjadi penurunan akurasi **hanya 5.2%**.
-* Ini membuktikan bahwa *pipeline* (Whisper + BERT) sangat **tangguh (robust)**. Meskipun ASR Whisper memiliki WER 27.1%, sebagian besar kesalahannya tidak mengubah makna semantik kalimat, sehingga BERT tetap dapat memprediksi intensi dengan benar.
-
----
-## 📁 Struktur Repositori
-
-Semua kode bersifat *reusable* dan dibagi menjadi beberapa skrip di dalam folder `src/`.
-
-Anda benar sekali. Maaf atas masalah itu.
-
-Masalahnya adalah saya menggunakan karakter spesial (├── dan │) yang seringkali tidak dirender dengan baik oleh GitHub Markdown.
-
-Cara paling aman dan rapi adalah menggunakan code block standar tanpa karakter spesial tersebut, hanya menggunakan indentasi spasi.
-
-Berikut adalah README.md versi final yang sudah diperbaiki. Silakan ganti seluruh isi file Anda dengan yang ini.
-
-Markdown
-
-# Project 3: Spoken Language Understanding (ASR & Intent)
-
-Proyek ini adalah implementasi *end-to-end* dari pipeline **Spoken Language Understanding (SLU)**, sebagai bagian dari Portofolio Project 3 Indonesia AI.
-
-Tujuan proyek ini adalah menyelesaikan dua tugas utama menggunakan dataset `en-US` dari **MINDS-14**:
-1.  **Automatic Speech Recognition (ASR):** Mengubah audio ucapan menjadi teks.
-2.  **Intent Classification:** Menentukan maksud (intensi) dari teks yang diucapkan.
-
----
-
-## 🚀 benchmarks
-Sesuai dengan rencana proyek, kami membandingkan tiga pendekatan benchmark:
-
-1.  **Benchmark 1: LSTM (from scratch)**
-    * Model LSTM *bidirectional* 2-layer yang dilatih dari nol.
-    * Fitur input menggunakan **MFCC (Mel-Frequency Cepstral Coefficients)** yang diekstraksi dari audio mentah.
-    * Menggunakan CTC (Connectionist Temporal Classification) Loss.
-
-2.  **Benchmark 2: Wav2Vec2 (Fine-Tuning)**
-    * Menggunakan model *pre-trained* `facebook/wav2vec2-base-960h`.
-    * Model ini dilatih secara *self-supervised* pada 960 jam audio tanpa label.
-    * Kami melakukan *fine-tuning* pada *head* CTC model dengan data `en-US`.
-
-3.  **Benchmark 3: Whisper (Fine-Tuning)**
-    * Menggunakan model *pre-trained* `openai/whisper-tiny.en`.
-    * Model ini adalah arsitektur Encoder-Decoder (Seq2Seq) yang dilatih secara *supervised* pada 680.000 jam data audio berlabel.
-    * Kami melakukan *fine-tuning* pada keseluruhan model.
-
----
-
-## 📊 Hasil Pipeline 1: Automatic Speech Recognition (ASR)
-
-Kami membandingkan tiga pendekatan benchmark untuk ASR:
-* **Benchmark 1 (LSTM from 0):** Model LSTM *bidirectional* yang dilatih dari nol menggunakan fitur **MFCC**.
-* **Benchmark 2 (Wav2Vec2 Fine-Tune):** *Fine-tuning* pada model `facebook/wav2vec2-base-960h` (Self-Supervised).
-* **Benchmark 3 (Whisper Fine-Tune):** *Fine-tuning* pada model `openai/whisper-tiny.en` (Supervised).
-
-### Evaluasi ASR
-Evaluasi dilakukan pada 57 sampel (10%) dari dataset `en-US` menggunakan 4 metrik.
-
-| Benchmark | Model | WER (↓) | CER (↓) | SER (↓) | BERT-F1 (↑) |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Benchmark 1** | LSTM (from 0) | 1.0000 | 1.0000 | 1.0000 | 0.0000 |
-| **Benchmark 2** | Wav2Vec2 | 1.0000 | 0.9725 | 1.0000 | 0.7971 |
-| **Benchmark 3** | **Whisper** | **0.2713** | **0.2226** | **0.6667** | **0.9593** |
-
-*(↓) = Semakin rendah semakin baik. (↑) = Semakin tinggi semakin baik.*
-
-### Visualisasi Hasil ASR
-
-**Perbandingan Error Rates (WER, CER, SER)**
-![Perbandingan Error Rates](benchmark_error_rates_comparison.png)
-
-**Perbandingan Skor Semantik (BERTScore F1)**
-![Perbandingan BERTScore](benchmark_bertscore_comparison.png)
-
-### Analisis ASR
-1.  **LSTM & Wav2Vec2 (Gagal):** Melatih dari nol (LSTM) atau *fine-tuning* model *self-supervised* (Wav2Vec2) pada dataset yang sangat kecil (~500 sampel) gagal total menghasilkan teks yang benar (WER 100%).
-2.  **Wawasan Wav2Vec2:** Meskipun WER-nya 100%, Wav2Vec2 mencapai **BERTScore F1 79.7%**. Ini menunjukkan model berhasil mempelajari *makna* (semantik) dari audio, tetapi gagal memetakannya ke *vocabulary* (kata) yang benar because of the lack of labeled *fine-tuning* data.
-3.  **Benchmark 3 (Sukses):** **Whisper** adalah pemenang mutlak di semua metrik. Karena dilatih pada 680.000 jam data *berlabel*, model ini sudah "mengerti" bahasa Inggris sebelum *fine-tuning*. Hasil **WER 27.1%** dan **BERT-F1 95.9%** menunjukkan bahwa *transfer learning* dari model *supervised* skala besar adalah pendekatan yang paling efektif untuk dataset ASR berukuran kecil.
-
----
-
-## 📊 Hasil Pipeline 2: Intent Classification (Teks-ke-Intensi)
-
-Kami melatih model *classifier* (`bert-base-uncased`) untuk memprediksi 1 dari 14 intensi dari transkripsi. Kami menguji dua skenario:
-
-1.  **Skenario 1 (Ideal):** Model BERT memprediksi intensi dari **teks asli** (transkripsi manusia).
-2.  **Skenario 2 (Real-World):** *Pipeline* bertingkat (cascaded). Audio mentah -> **Whisper** -> Teks Prediksi -> **BERT** -> Prediksi Intensi.
-
-### Evaluasi Intensi
-Evaluasi dilakukan pada 57 sampel (10%) dari dataset `en-US`.
-
-| Skenario | Pipeline | Akurasi (↑) |
-| :--- | :--- | :--- |
-| 1 (Ideal) | Teks Asli -> BERT | **0.9474 (94.7%)** |
-| 2 (Real-World) | Audio -> Whisper -> BERT | **0.8947 (89.5%)** |
-
-### Analisis Intensi
-* Model *classifier* BERT sangat akurat (94.7%) jika diberi input teks yang sempurna.
-* Pada *pipeline real-world*, terjadi penurunan akurasi **hanya 5.2%**.
-* Ini membuktikan bahwa *pipeline* (Whisper + BERT) sangat **tangguh (robust)**. Meskipun ASR Whisper memiliki WER 27.1%, sebagian besar kesalahannya tidak mengubah makna semantik kalimat, sehingga BERT tetap dapat memprediksi intensi dengan benar.
+* Model *classifier* BERT sangat akurat (96.5%) jika diberi input teks yang sempurna.
+* Pada *pipeline real-world*, terjadi penurunan akurasi **hanya 1.8%**.
+* Ini membuktikan bahwa *pipeline* (Whisper + BERT) sangat **tangguh (robust)**. Meskipun ASR Whisper memiliki WER 26.6%, sebagian besar kesalahannya tidak mengubah makna semantik kalimat, sehingga BERT tetap dapat memprediksi intensi dengan benar.
 
 ---
 
@@ -203,8 +105,8 @@ src/
 
 1.  **Clone dan Setup Environment:**
     ```bash
-    git clone [URL_REPO_ANDA]
-    cd [NAMA_FOLDER_REPO]
+    git clone [https://github.com/arjunarivaldo/Voice-Recognition.git]
+    cd [Voice-Recognition]
     pip install -r requirements.txt
     ```
 

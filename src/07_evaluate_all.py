@@ -81,7 +81,7 @@ def predict_whisper(audio_array, sampling_rate, model, processor):
     transcription = processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
     return transcription
 
-# --- (BARU) Fungsi Manual untuk SER ---
+# --- Fungsi Manual untuk SER ---
 def calculate_ser(predictions, references):
     """
     Menghitung Sentence Error Rate (SER) secara manual.
@@ -102,11 +102,10 @@ def main():
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Menggunakan device: {DEVICE}")
 
-    # 1. Muat Metrik (HAPUS 'ser')
+    # 1. Muat Metrik 
     print("Memuat metrik WER, CER, dan BERTScore...")
     wer_metric = evaluate.load("wer")
     cer_metric = evaluate.load("cer")
-    # ser_metric = evaluate.load("ser") # <-- DIHAPUS
     bertscore_metric = evaluate.load("bertscore")
 
     # 2. Muat Data Test (RAW)
@@ -120,17 +119,17 @@ def main():
     print(f"Data test yang akan dievaluasi: {len(test_dataset)} sampel.")
 
     # 3. Muat Model & Processor
-    print("Memuat model LSTM (Benchmark 1)...")
+    print("Memuat model LSTM...")
     lstm_model_path = f"{config.OUTPUT_DIR_LSTM}/best_model"
     lstm_model = LstmCtcForAsr.from_pretrained(lstm_model_path).to(DEVICE).eval()
     lstm_tokenizer = SimpleCtcTokenizer(config.VOCAB, config.CTC_BLANK_TOKEN_ID)
 
-    print("Memuat model Wav2Vec2 (Benchmark 2)...")
+    print("Memuat model Wav2Vec2...")
     w2v2_model_path = f"{config.OUTPUT_DIR_WAV2VEC2_MODEL}/best_model"
     w2v2_model = Wav2Vec2ForCTC.from_pretrained(w2v2_model_path).to(DEVICE).eval()
     w2v2_processor = Wav2Vec2Processor.from_pretrained(w2v2_model_path)
 
-    print("Memuat model Whisper (Benchmark 3)...")
+    print("Memuat model Whisper...")
     whisper_model_path = f"{config.OUTPUT_DIR_WHISPER_MODEL}/best_model"
     whisper_model = WhisperForConditionalGeneration.from_pretrained(whisper_model_path).to(DEVICE).eval()
     whisper_processor = WhisperProcessor.from_pretrained(whisper_model_path)
@@ -143,7 +142,7 @@ def main():
     preds_w2v2 = []
     preds_whisper = []
 
-    for item in tqdm(test_dataset, desc="Mengevaluasi Benchmark"):
+    for item in tqdm(test_dataset, desc="Mengevaluasi"):
         audio_data = item["audio"]
         ref_original = item["transcription"]
         ref_cleaned = clean_text(ref_original)
@@ -172,7 +171,7 @@ def main():
     wer_whisper = wer_metric.compute(predictions=preds_whisper, references=references_original)
     cer_whisper = cer_metric.compute(predictions=preds_whisper, references=references_original)
 
-    # (BARU) Hitung SER (Manual)
+    # Hitung SER (Manual)
     ser_lstm = calculate_ser(preds_lstm, references_cleaned)
     ser_w2v2 = calculate_ser(preds_w2v2, references_cleaned)
     ser_whisper = calculate_ser(preds_whisper, references_original)
@@ -192,7 +191,7 @@ def main():
     print(f"(Dataset: {config.LANG_SUBSET}, Test Samples: {len(test_dataset)})")
     print("="*55)
     
-    models = ["Benchmark 1 (LSTM from 0)", "Benchmark 2 (Wav2Vec2 Fine-Tune)", "Benchmark 3 (Whisper Fine-Tune)"]
+    models = ["LSTM from 0", "Wav2Vec2 Fine-Tune", "Whisper Fine-Tune"]
     results_wer = [wer_lstm, wer_w2v2, wer_whisper]
     results_cer = [cer_lstm, cer_w2v2, cer_whisper]
     results_ser = [ser_lstm, ser_w2v2, ser_whisper]
@@ -230,7 +229,7 @@ def main():
         palette='muted'
     )
     plt.title('Perbandingan Error Rates (WER, CER, SER)', fontsize=16)
-    plt.xlabel('Model Benchmark', fontsize=12)
+    plt.xlabel('Model', fontsize=12)
     plt.ylabel('Error Rate (Lebih rendah lebih baik)', fontsize=12)
     plt.ylim(0, max(df_errors['Score'].max() * 1.1, 1.1)) 
     
@@ -242,7 +241,7 @@ def main():
                             textcoords='offset points',
                             fontsize=9)
     
-    plot_filename_1 = 'benchmark_error_rates_comparison.png'
+    plot_filename_1 = 'error_rates_comparison.png'
     plt.savefig(plot_filename_1)
     print(f"Plot Error Rates disimpan ke '{plot_filename_1}'")
     plt.clf()
@@ -256,7 +255,7 @@ def main():
         palette='viridis'
     )
     plt.title('Perbandingan Skor Semantik (BERTScore F1)', fontsize=16)
-    plt.xlabel('Model Benchmark', fontsize=12)
+    plt.xlabel('Model', fontsize=12)
     plt.ylabel('BERTScore F1 (Lebih tinggi lebih baik)', fontsize=12)
     plt.ylim(0, max(df_bert['Score'].max() * 1.1, 0.8)) 
     
@@ -268,7 +267,7 @@ def main():
                             textcoords='offset points',
                             fontsize=11)
     
-    plot_filename_2 = 'benchmark_bertscore_comparison.png'
+    plot_filename_2 = 'bertscore_comparison.png'
     plt.savefig(plot_filename_2)
     print(f"Plot BERTScore disimpan ke '{plot_filename_2}'")
 

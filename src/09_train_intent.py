@@ -3,7 +3,7 @@ import os
 import torch
 import numpy as np
 import psutil
-import evaluate # Untuk memuat metrik
+import evaluate 
 
 from datasets import load_from_disk
 from transformers import (
@@ -23,7 +23,7 @@ except ImportError:
     exit()
 
 # --- 1. Inisialisasi Metrik ---
-# Kita akan memonitor 'accuracy', 'f1', 'precision', dan 'recall'
+# Memonitor 'accuracy', 'f1', 'precision', dan 'recall'
 accuracy_metric = evaluate.load("accuracy")
 f1_metric = evaluate.load("f1")
 precision_metric = evaluate.load("precision")
@@ -56,7 +56,7 @@ def compute_metrics(eval_pred):
 def main():
     print(f"Memori RAM tersedia: {psutil.virtual_memory().available / (1024**3):.2f} GB")
     
-    # 1. Muat data yang sudah diproses (dari Langkah 15)
+    # 1. Muat data yang sudah diproses
     print(f"Memuat data Intent yang diproses dari '{config.OUTPUT_DIR_INTENT_DATA}'...")
     if not os.path.exists(config.OUTPUT_DIR_INTENT_DATA):
         print(f"Error: Folder data '{config.OUTPUT_DIR_INTENT_DATA}' tidak ditemukan.")
@@ -69,7 +69,7 @@ def main():
     print("Membuat split Train/Validation (90/10)...")
     split_dataset = processed_dataset.train_test_split(test_size=0.1, seed=42, shuffle=True)
     train_dataset = split_dataset["train"]
-    eval_dataset = split_dataset["test"] # Kita gunakan 'test' split sebagai 'validation'
+    eval_dataset = split_dataset["test"] 
     
     print(f"Jumlah data train: {len(train_dataset)}")
     print(f"Jumlah data validation: {len(eval_dataset)}")
@@ -80,7 +80,7 @@ def main():
     
     model_config = AutoConfig.from_pretrained(
         config.INTENT_MODEL_NAME,
-        num_labels=14 # Dari EDA kita (14 kelas intensi)
+        num_labels=14 
     )
     
     model = AutoModelForSequenceClassification.from_pretrained(
@@ -108,7 +108,7 @@ def main():
         save_strategy="epoch", 
         
         load_best_model_at_end=True,
-        metric_for_best_model="accuracy", # Kita gunakan 'accuracy'
+        metric_for_best_model="accuracy", # Mengunakan 'accuracy'
         greater_is_better=True,
         
         fp16=torch.cuda.is_available(), 
@@ -116,8 +116,8 @@ def main():
         disable_tqdm=True,
     )
 
-    # 6. Inisialisasi Trainer (STANDAR, bukan CustomTrainer)
-    # Kita tidak perlu class weights karena datanya balanced
+    # 6. Inisialisasi Trainer (STANDAR)
+    # Tidak perlu class weights karena datanya balanced
     trainer = Trainer(
         model=model,
         args=training_args,

@@ -19,7 +19,7 @@ def preprocess_batch_intent(batch, tokenizer, max_len):
     """
     
     # 1. Tokenisasi Teks (Input)
-    # Kita tidak perlu clean_text, biarkan BERT yang menangani
+    # Tidak perlu clean_text, biarkan BERT yang menangani
     tokenized_batch = tokenizer(
         batch["transcription"],
         max_length=max_len,
@@ -68,7 +68,7 @@ def main():
         remove_columns=[
             'path', 'audio', 'transcription', 
             'english_transcription', 'intent_class', 'lang_id'
-        ] # Hapus semua kolom lama
+        ]
     )
     
     # 4. Simpan ke Disk

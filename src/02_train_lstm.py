@@ -23,7 +23,7 @@ except ImportError:
     exit()
 
 
-# --- 1. Data Collator (DI-UPGRADE) ---
+# --- 1. Data Collator ---
 @dataclass
 class DataCollatorCTCWithPadding:
     """
@@ -35,7 +35,7 @@ class DataCollatorCTCWithPadding:
         # --- Input (MFCC) & Input Lengths ---
         input_features = [{"input_features": f["input_features"]} for f in features]
         
-        # (BARU) Simpan panjang asli (unpadded) dari setiap MFCC
+        # Simpan panjang asli (unpadded) dari setiap MFCC
         input_lengths = [len(f["input_features"]) for f in input_features]
         
         max_input_len = max(input_lengths)
@@ -45,8 +45,7 @@ class DataCollatorCTCWithPadding:
             dtype=torch.float
         )
         
-        # (BARU) Buat Attention Mask (1 untuk data asli, 0 untuk padding)
-        # Mirip Project 2
+        # Buat Attention Mask (1 untuk data asli, 0 untuk padding)
         attention_mask = torch.zeros(
             (len(input_features), max_input_len), 
             dtype=torch.long
@@ -60,7 +59,7 @@ class DataCollatorCTCWithPadding:
         # --- Label (Teks) & Label Lengths ---
         label_features = [{"input_ids": f["labels"]} for f in features]
         
-        # (BARU) Simpan panjang asli (unpadded) dari setiap label
+        # Simpan panjang asli (unpadded) dari setiap label
         label_lengths = [len(f["input_ids"]) for f in label_features]
         
         max_label_len = max(label_lengths)
@@ -79,14 +78,14 @@ class DataCollatorCTCWithPadding:
         return {
             "input_features": batch_inputs,
             "labels": batch_labels,
-            "attention_mask": attention_mask, # (BARU) Untuk model
-            "input_lengths": torch.tensor(input_lengths, dtype=torch.long), # (BARU) Untuk model
-            "label_lengths": torch.tensor(label_lengths, dtype=torch.long)  # (BARU) Untuk model
+            "attention_mask": attention_mask, 
+            "input_lengths": torch.tensor(input_lengths, dtype=torch.long), 
+            "label_lengths": torch.tensor(label_lengths, dtype=torch.long)
         }
 
-# --- 2. Fungsi Metrik (BARU) ---
-# Kita perlu cara untuk decode prediksi angka -> teks
-# Kita buat "tokenizer" palsu dari vocab kita
+# --- 2. Fungsi Metrik ---
+# Decode prediksi angka -> teks
+# Membuat "tokenizer" palsu dari vocab
 class SimpleCtcTokenizer:
     def __init__(self, vocab_list, blank_id=0):
         # map angka ke karakter (1 -> ' ', 2 -> 'a', ...)
@@ -118,17 +117,13 @@ def compute_metrics(pred):
     pred_logits = pred.predictions
     pred_ids = np.argmax(pred_logits, axis=-1)
     
-    # --- PERBAIKAN ---
-    # pred.label_ids adalah tuple (labels, input_lengths, label_lengths)
-    # Kita hanya ambil elemen pertamanya (labels)
     label_ids = pred.label_ids[0] 
     
     # (Opsional tapi lebih aman) Buat salinan agar bisa diubah
     label_ids = label_ids.copy()
-    # ------------------
     
     # Ganti -100 (padding) di labels dengan <blank> (0) agar bisa di-decode
-    label_ids[label_ids == -100] = config.CTC_BLANK_TOKEN_ID # (Sekarang aman)
+    label_ids[label_ids == -100] = config.CTC_BLANK_TOKEN_ID 
     
     # Decode (Angka -> Teks)
     pred_str = [tokenizer_for_metrics.decode(ids) for ids in pred_ids]
@@ -181,38 +176,38 @@ def main():
     print("Mempersiapkan Training Arguments...")
     training_args = TrainingArguments(
         output_dir=config.OUTPUT_DIR_LSTM,
-        num_train_epochs=50, # Kita perlu epoch lebih banyak (coba 50)
+        num_train_epochs=50,
         per_device_train_batch_size=16,
         per_device_eval_batch_size=16,
         
         logging_dir=f"{config.OUTPUT_DIR_LSTM}/logs",
         logging_strategy="steps",
-        logging_steps=10, # Log lebih sering
+        logging_steps=10,
         
         eval_strategy="epoch", 
         save_strategy="epoch", 
         
         load_best_model_at_end=True,
-        metric_for_best_model="wer", # (BARU) Gunakan WER
+        metric_for_best_model="wer",
         greater_is_better=False,    # WER lebih kecil lebih baik
         
         fp16=torch.cuda.is_available(), 
         report_to="tensorboard",
         disable_tqdm=True, 
         
-        # (BARU) Penting untuk CTC: abaikan 'labels' dari input model
-        # karena kita sudah menanganinya di dalam 'forward'
+        # Penting untuk CTC: abaikan 'labels' dari input model
+        # karena sudah menanganinya di dalam 'forward'
         label_names=["labels", "input_lengths", "label_lengths"]
     )
 
-    # 6. Inisialisasi Trainer (LENGKAP)
+    # 6. Inisialisasi Trainer
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=split_dataset["train"],
         eval_dataset=split_dataset["validation"],
         data_collator=data_collator,
-        compute_metrics=compute_metrics, # (BARU)
+        compute_metrics=compute_metrics, 
     )
 
     # 7. Mulai Training

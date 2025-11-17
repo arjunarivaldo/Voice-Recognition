@@ -9,13 +9,13 @@ import psutil
 # Impor helper dan konfigurasi dari file .py kita
 try:
     from utils_asr import clean_text
-    import config_asr as config # Impor file konfigurasi kita
+    import config_asr as config 
 except ImportError:
     print("Error: Pastikan file 'utils_asr.py' dan 'config_asr.py' ada di folder 'src/' yang sama.")
     exit()
 
 # --- Membuat pemetaan Tokenizer dari Config ---
-# Kita gunakan VOCAB dari config_asr.py
+# Menggunakan VOCAB dari config_asr.py
 char_to_num = {char: i + 1 for i, char in enumerate(config.VOCAB)} # +1 agar 0 bisa jadi <blank>
 
 
