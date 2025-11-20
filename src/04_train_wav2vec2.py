@@ -120,13 +120,12 @@ def main():
     print(f"Jumlah data validation: {len(split_dataset['validation'])}")
 
     # 3. Inisialisasi Data Collator (Bawaan Transformers)
-    # Collator ini akan menangani 'input_values' dan 'labels'
     data_collator = DataCollatorCTCWithPadding(
         processor=processor,
         padding=True
     )
 
-    # 4. Inisialisasi Model (BARU)
+    # 4. Inisialisasi Model 
     print(f"Memuat Model Pre-trained '{config.WAV2VEC2_MODEL_NAME}'...")
     model = Wav2Vec2ForCTC.from_pretrained(
         config.WAV2VEC2_MODEL_NAME,
@@ -135,7 +134,7 @@ def main():
         vocab_size=len(processor.tokenizer) # Ukuran vocab dari processor
     )
     
-    # --- (PENTING) Langkah 10.1: Freezing Feature Extractor ---
+    # --- (PENTING) Freezing Feature Extractor ---
     print("Membekukan (freezing) feature extractor model...")
     model.freeze_feature_extractor()
 

@@ -48,6 +48,20 @@ Evaluasi dilakukan pada 57 sampel (10%) dari dataset `en-US` menggunakan 4 metri
 
 ---
 
+## 🔍 Analisis Kesalahan Kualitatif (Human Evaluation)
+
+Meskipun Whisper mencapai WER 26.6%, kami melakukan analisis manual (*Human Transcription Comparison*) untuk memahami jenis kesalahan yang terjadi.
+
+| Kategori Error | Audio Asli (Reference) | Prediksi Model | Dampak |
+| :--- | :--- | :--- | :--- |
+| **Critical** (Salah Makna) | "...about a **business phone**" | "...about a **business loan**" | 🔴 Tinggi (Salah Intensi) |
+| **Hallucination** (Salah Dengar) | "**mobile** payments..." | "**couple** payments..." | 🟡 Sedang |
+| **Minor** (Ejaan/Normalisasi) | "...it says **I'll** get..." | "...it says **ill** get..." | 🟢 Rendah (Makna Aman) |
+
+**Insight:** Sebagian besar kesalahan Whisper bersifat **Minor** atau **Halusinasi** fonetik yang tidak mengubah konteks utama kalimat secara drastis. Inilah alasan mengapa pipeline klasifikasi intensi (di bawah) tetap memiliki performa tinggi.
+
+---
+
 ## 📊 Hasil Pipeline 2: Intent Classification (Teks-ke-Intensi)
 
 Kami melatih model *classifier* (`bert-base-uncased`) untuk memprediksi 1 dari 14 intensi dari transkripsi. Kami menguji dua skenario:

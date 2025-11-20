@@ -22,7 +22,6 @@ char_to_num = {char: i + 1 for i, char in enumerate(config.VOCAB)} # +1 agar 0 b
 def preprocess_batch(batch, target_sr, n_mfcc):
     """
     Fungsi utama yang akan di-apply menggunakan .map()
-    Mirip dengan _preprocess_batch di Project 2 Anda.
     """
     
     # --- 1. Audio Preprocessing (MFCC) ---

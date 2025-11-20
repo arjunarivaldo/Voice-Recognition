@@ -94,7 +94,7 @@ class LstmCtcForAsr(PreTrainedModel):
         if labels is not None:
             # --- Jika 'labels' diberikan (mode training), hitung loss ---
             
-            # Kita perlu panjang (unpadded) dari input (MFCC)
+            # Perlu panjang (unpadded) dari input (MFCC)
             if input_lengths is None and attention_mask is not None:
                 # Hitung panjang input dari attention_mask (jika collator memberikannya)
                 input_lengths = attention_mask.sum(-1).long()
@@ -105,7 +105,7 @@ class LstmCtcForAsr(PreTrainedModel):
                     dtype=torch.long, device=log_probs.device
                 )
 
-            # Kita perlu panjang (unpadded) dari label
+            # Perlu panjang (unpadded) dari label
             if label_lengths is None:
                 # Hitung panjang label dari labels (abaikan -100)
                 label_lengths = (labels != -100).sum(-1).long()
@@ -125,5 +125,5 @@ class LstmCtcForAsr(PreTrainedModel):
         # Kembalikan output yang kompatibel dengan Trainer
         return CausalLMOutput(
             loss=loss,
-            logits=logits, # (Kita kembalikan logits mentah, bukan log_probs)
+            logits=logits, # (Kembalikan logits mentah, bukan log_probs)
         )

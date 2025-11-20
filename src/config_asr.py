@@ -1,3 +1,5 @@
+import os
+
 # src/config_asr.py
 """
 File konfigurasi terpusat untuk project ASR (Project 3).
@@ -34,6 +36,11 @@ LSTM_DROPOUT = 0.1
 
 # Path output spesifik untuk data yang diproses MFCC
 OUTPUT_DIR_MFCC = "./processed_data_mfcc" 
+
+# --- Path Output Laporan ---
+REPORTS_DIR = "./reports"
+FIGURES_DIR = os.path.join(REPORTS_DIR, "figures")
+QUALITATIVE_REPORT_FILE = os.path.join(REPORTS_DIR, "whisper_error_analysis.csv")
 
 # --- Konfigurasi Benchmark 1: LSTM ---
 OUTPUT_DIR_LSTM = "./models/lstm-mfcc-from-scratch"
